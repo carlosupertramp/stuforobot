@@ -2,14 +2,14 @@
 
 #
 #	Author			: C. Balbo <carlo.balbo@unipolsai.it>
-#	Last Modify		: 2018.August.23 - DA: -304357.8196347032
+#	Last Modify		: 2018.August.25 - DA: -304357.8196347032
 #
 #	Interprete		: C:\Users\uga04332\AppData\Local\Programs\Python\Python37\python.exe
 #
-#   Requirements	: Installare  mail-parser tramite pip e ehp
+#   Requiiti		: Installare  mail-parser e ehp tramite pip o da file
 #					>> pip install mail-parser
 #					>> pip install ehp
-
+#
 
 # Load Library
 import io, os
@@ -22,7 +22,7 @@ from cgitb import html
 
 # -------------------------------------
 global _debug
-_debug = 1
+_debug = 0
 # -------------------------------------
 
 def helpMe():
@@ -51,32 +51,45 @@ def getSocData(bodymessage):
 	#dBug("parse this body" + str(bodymessage))
 	socParse = Html()
 	_socData = socParse.feed(bodymessage)
-	dataBlock = ['record']
+	dataBlock = ['AL2-KPI']
 #	for j in _socData.find('td', ('style', 'font-weight: bold; padding-left: 4px; padding-bottom: 5px;')):
-	for b1 in _socData.find('td', ('style', 'padding-right: 5px; ')):
-		print("blocco 1>> " + b1.text())
-	for b2 in _socData.find('td', ('style', 'font-weight: bold; padding-left: 4px; padding-bottom: 5px;')):
-		print("blocco 2>> " + b2.text())
-	for b3 in _socData.find('span', ('class', 'HomePageText')): #Titoli
-		print("blocco 3>> " + b3.text())
-	for _logs in _socData.find('span', ('id', 'ctl00_cph_lLogsReceivedNum')): #Logs
-		print("Logs: >>" + _logs.text())
-		dataBlock.append(_logs.text())
-	for _analyzed in _socData.find('span', ('id', 'ctl00_cph_lIncidentsAnalyzedNum')): #Analyzed
-		print("Analyzed: >>" + _analyzed.text())
-	for _validated in _socData.find('span', ('id', 'ctl00_cph_lIncidentsValidatedNum')): #Validated
-		print("Validated: >>" + _validated.text())
-	for _severe in _socData.find('span', ('id', 'ctl00_cph_lSevereIncidentsNum')): #Sever
-		print("Severe: >>" + _severe.text())
-	dataBlock.append('0')
-	for _params in _socData.find('div', ('style', 'font-weight: bold; padding-bottom: 4px; margin-top: 10px;')): #Warning
-		_params = _params.text()
-		_params = _params[-1]
-		print("dataIn: >>" + _params)
-		dataBlock.append(_params)
+#	for b1 in _socData.find('td', ('style', 'padding-right: 5px; ')):
+#		dBug("blocco 1>> " + b1.text())
+#	for b2 in _socData.find('td', ('style', 'font-weight: bold; padding-left: 4px; padding-bottom: 5px;')):
+#		dBug("blocco 2>> " + b2.text())
+#	for b3 in _socData.find('span', ('class', 'HomePageText')): #Titoli
+#		dBug("blocco 3>> " + b3.text())
+	try:
+		for _logs in _socData.find('span', ('id', 'ctl00_cph_lLogsReceivedNum')): #Logs
+			dBug("Logs: >>" + _logs.text())
+			dataBlock.append(int(_logs.text()))
+		for _analyzed in _socData.find('span', ('id', 'ctl00_cph_lIncidentsAnalyzedNum')): #Analyzed
+			dBug("Analyzed: >>" + _analyzed.text())
+			dataBlock.append(int(_analyzed.text()))
+		for _validated in _socData.find('span', ('id', 'ctl00_cph_lIncidentsValidatedNum')): #Validated
+			dBug("Validated: >>" + _validated.text())
+			dataBlock.append(int(_validated.text()))
+		for _severe in _socData.find('span', ('id', 'ctl00_cph_lSevereIncidentsNum')): #Sever
+			dBug("Severe: >>" + _severe.text())
+		
+		dataBlock.append(0) # Emergency
 
-	print(dataBlock)
+		for _params in _socData.find('div', ('style', 'font-weight: bold; padding-bottom: 4px; margin-top: 10px;')): #Warning
+			_params = _params.text()
+			_params = _params[-1]
+			dataBlock.append(int(_params))
+		if len(dataBlock) < 8:
+			print "Exception: Numero dati non completo < 8"
+			return False
+		if dataBlock[1] < 100000:
+			print "Warning: potenziale problema nella raccolta dati il numero LOGS troppo basso < 100.000"
+			return False
+	except:
+		print "Exception: Alcuni elementi non sono numeri interi."
+		return False
+
 	socParse.close()
+	return dataBlock
 
 # +-------------------------------------------------------+
 # |                                              MAIN <<<<|
@@ -88,6 +101,6 @@ def main(opts):
 			sys.exit(2)
 	else:
 		fullfilename = opts[1]
-		getSocData(parseThis(fullfilename))
+		print getSocData(parseThis(fullfilename))
 	
 main(sys.argv)
