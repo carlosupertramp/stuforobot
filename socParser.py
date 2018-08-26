@@ -1,4 +1,4 @@
-#!C:\Users\uga04332\AppData\Local\Programs\Python\Python37\python.exe
+#!/usr/bin/python
 
 #
 #	Author			: Carlo B. <ktx@oblab.com>
