@@ -1,10 +1,10 @@
 #!C:\Users\uga04332\AppData\Local\Programs\Python\Python37\python.exe
 
 #
-#	Author			: C. Balbo <carlo.balbo@unipolsai.it>
+#	Author			: Carlo B. <ktx@oblab.com>
 #	Last Modify		: 2018.August.25 - DA: -304357.8196347032
 #
-#	Interprete		: C:\Users\uga04332\AppData\Local\Programs\Python\Python37\python.exe
+#	Interprete		: 
 #
 #   Requiiti		: Installare  mail-parser e ehp tramite pip o da file
 #					>> pip install mail-parser
